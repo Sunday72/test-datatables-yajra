@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\School;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Auth\Access\Response;
+use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreSchoolRequest;
 use App\Http\Requests\UpdateSchoolRequest;
-use Illuminate\Auth\Access\Response;
 
 class SchoolController extends Controller
 {
@@ -19,12 +20,19 @@ class SchoolController extends Controller
         return view('school.index');
     }
 
+
+
+
+    /**
+     * Datatables.
+     */
     public function datatable(Request $request){
         if($request->ajax()){
-            $schools = School::select('*');
+            $schools = DB::table('schools')->orderByDesc('created_at')->get();
+
             return DataTables::of($schools)
             ->addColumn('action', function($row) {
-                $btn = '<a href="'.route('school.show', $row->id).'" class="btn btn-primary btn-sm me-2 view-school" data-id="'.$row->id.'">View</a>';
+                $btn = '<a href="'.route('school.show', $row->id).'" class="btn btn-primary btn-sm me-2">View</a>';
                 $btn .= '<a href="'.route('school.edit', $row->id).'" class="btn btn-warning btn-sm me-2">Edit</a>';
                 $btn .= '<form action="'.route('school.destroy', $row->id).'" method="POST" class="d-inline-block">
                             '.csrf_field().'
@@ -34,6 +42,7 @@ class SchoolController extends Controller
 
                 return $btn;
             })
+            // ->order(function ($query) {})
             ->make(true);
         }
 
@@ -59,10 +68,11 @@ class SchoolController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(School $school)
     {
-        $schools = School::findOrFail($id);
-        return response()->json($schools);
+        return view('school.detail', [
+            'school' => $school
+        ]);
     }
 
     /**
@@ -70,7 +80,9 @@ class SchoolController extends Controller
      */
     public function edit(School $school)
     {
-        //
+        return view('school.edit', [
+            'school' => $school
+        ]);
     }
 
     /**
@@ -86,6 +98,8 @@ class SchoolController extends Controller
      */
     public function destroy(School $school)
     {
-        //
+        $school->delete();
+
+        return redirect()->route('school.index');
     }
 }

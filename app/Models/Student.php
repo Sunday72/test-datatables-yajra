@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\Student;
+use App\Models\School;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class School extends Model
+class Student extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function students(){
-        return $this->hasMany(Student::class);
+    public function school(){
+        return $this->belongsTo(School::class);
     }
 }

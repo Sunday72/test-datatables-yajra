@@ -36,37 +36,19 @@
               ]
           });
 
-          // Klik pada tombol 'View'
-          $(document).on('click', '.view-school', function() {
-            var id = $(this).data('id');
 
-            $.ajax({
-                url: "{{ url('school') }}/"+id,
-                type: "GET",
-                dataType: "JSON",
-                success: function(data) {
-                    $('#school-nama-sekolah').val(data.nama_sekolah);
-                    $('#school-jurusan').val(data.jurusan);
-                    $('#school-jumlah-siswa').val(data.jumlah_siswa);
-                    $('#view-school-modal').modal('show');
-                },
-                // error: function() {
-                //     alert('Error: Failed to load data.');
-                // }
-            });
-
-            // var redirectData = {!! json_encode(session()->get('data', [])) !!};
-
-            // // if redirectData is not empty, show modal popup with data
-            // if (Object.keys(redirectData).length > 0) {
-            //     // show modal popup and populate data
-            //     $('#view-school-modal').modal('show');
-            //     $('#id').html(redirectData.id);
-            //     $('#nama_sekolah').html(redirectData.nama_sekolah);
-            //     $('#jurusan').html(redirectData.jurusan);
-            //     $('#jumlah_siswa').html(redirectData.jumlah_siswa);
-            // }
-        });
+          $('#student-table').DataTable({
+              processing: true,
+              serverSide: true,
+              ajax: '{{ route("students.datatable") }}',
+              columns: [
+                  { data: 'nisn', name: 'nisn' },
+                  { data: 'nama', name: 'nama' },
+                  { data: 'sekolah', name: 'sekolah' },
+                //   { data: 'jumlah_siswa', name: 'jumlah_siswa' },
+                //   { data: 'action', name: 'action', orderable: false, searchable: false },
+              ]
+          });
       });
 
   </script>
